@@ -188,7 +188,7 @@ class FlexMock
         end
         original_method.bind(@obj).call(*args, &block)
       else
-        raise ArgumentError, "no original method for #{method}"
+        @obj.__send__(:method_missing, method, *args, &block)
       end
     end
 

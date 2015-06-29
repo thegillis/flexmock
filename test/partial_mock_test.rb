@@ -471,4 +471,42 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal 30, obj.foo
   end
 
+  def test_partial_mocks_can_call_an_original_message_that_is_handled_by_method_missing
+    obj = Class.new do
+      attr_reader :mm_calls
+      def initialize
+        @mm_calls = Array.new
+      end
+      def method_missing(m, *args, &block)
+        @mm_calls << [m, args, block]
+        if m == :mm_handled_message
+          args[0] * 10 + args[1]
+        else
+          super
+        end
+      end
+    end.new
+    flexmock(obj).should_receive(:mm_handled_message).with(10, 20).once.pass_thru
+    assert_equal 120, obj.mm_handled_message(10, 20)
+    assert_equal [[:mm_handled_message, [10, 20], nil]], obj.mm_calls
+  end
+
+  def test_partial_mocks_mentions_the_pass_thru_clause_when_passing_thru_to_a_non_handled_message
+    obj = Class.new do
+      attr_reader :mm_calls
+      def initialize
+        @mm_calls = Array.new
+      end
+      def method_missing(m, *args, &block)
+        @mm_calls << [m, args, block]
+        super
+      end
+    end.new
+    flexmock(obj).should_receive(:does_not_exist).with(10, 20).once.pass_thru
+    exception = assert_raises(NoMethodError) do
+        obj.does_not_exist(10, 20)
+    end
+    assert(/pass_thru/ === exception.message, "expected #{exception.message} to mention the flexmock pass_thru clause")
+  end
+
 end
