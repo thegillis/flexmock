@@ -36,7 +36,23 @@ class FlexMock
     # defined in this test case.
     def before_teardown
       super
-      flexmock_teardown
+      if respond_to?(:capture_exceptions)
+        capture_exceptions do
+          flexmock_teardown
+        end
+      else
+        begin
+          flexmock_teardown
+        rescue Exception => e
+          @flexmock_teardown_failure = e
+        end
+      end
+    end
+
+    def after_teardown
+      if @flexmock_teardown_failure
+        raise @flexmock_teardown_failure
+      end
     end
   end
 

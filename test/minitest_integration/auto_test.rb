@@ -10,29 +10,63 @@
 #+++
 
 require 'minitest/autorun'
-require "test/test_setup"
+require "test/test_helpers"
 
 require "flexmock/base"
 require "flexmock/minitest"
 
-testclass =
-    if defined?(Minitest::Test) then Minitest::Test
-    else MiniTest::Unit::TestCase
-    end
-
-class TestFlexmockMinitest < testclass
-  include FlexMock::TestCase
-
-  def before_teardown
-    failed = false
-    begin
+if defined?(Minitest::Test)
+  class TestFlexmockMinitest < Minitest::Test
+    include FlexMock::TestCase
+  
+    def before_teardown
+      # flexmock should be teared down right now, and the teardown result should
+      # be registered in the test failures (specific to minitest 5.0+)
       super
-    rescue Exception => ex
-      failed = true
+      if @should_fail
+        assert 1, failures.size
+      else
+        assert 0, failures.size
+      end
+      # Clear failures ... otherwise the test will fail
+      failures.clear
+      assert @closed
     end
-    assert_equal @should_fail, failed, "Expected failed to be #{@should_fail}"
-  end
 
+    def flexmock_close
+      @closed = true
+      super
+    end
+  end
+else
+  class TestFlexmockMinitest < MiniTest::Unit::TestCase
+    include FlexMock::TestCase
+  
+    def before_teardown
+      # flexmock should be teared down right now, but nothing should be raised
+      # yet. The error will be raised in after_teardown
+      super
+      assert @closed
+    end
+
+    def after_teardown
+      begin
+        super
+        failed = false
+      rescue Exception => e
+        failed = true
+      end
+      assert_equal @should_fail, failed, "Expected failed to be #{@should_fail}"
+    end
+  end
+end
+
+class TestFlexmockMinitest
+  def flexmock_close
+    @closed = true
+    super
+  end
+  
   # This test should pass.
   def test_can_create_mocks
     m = flexmock("mock")
@@ -40,7 +74,7 @@ class TestFlexmockMinitest < testclass
     m.hi
     @should_fail = false
   end
-
+  
   # This test should fail during teardown.
   def test_should_fail__mocks_are_auto_verified
     m = flexmock("mock")
@@ -48,3 +82,4 @@ class TestFlexmockMinitest < testclass
     @should_fail = true
   end
 end
+
