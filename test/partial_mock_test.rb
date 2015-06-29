@@ -455,4 +455,20 @@ class TestStubbing < Test::Unit::TestCase
     flexmock(obj, :some_method => :some_method)
   end
 
+  def test_partial_mocks_can_stub_methods_already_prepended_on_the_singleton_class
+    m = Module.new { def foo; 10 end }
+    obj = Class.new.new
+    obj.singleton_class.class_eval { prepend m }
+    flexmock(obj).should_receive(:foo).once.and_return(20)
+    assert_equal 20, obj.foo
+  end
+
+  def test_partial_mocks_can_call_original_methods_already_prepended_on_the_singleton_class
+    m = Module.new { def foo; 10 end }
+    obj = Class.new.new
+    obj.singleton_class.class_eval { prepend m }
+    flexmock(obj).should_receive(:foo).once.pass_thru { |val| val * 3 }
+    assert_equal 30, obj.foo
+  end
+
 end

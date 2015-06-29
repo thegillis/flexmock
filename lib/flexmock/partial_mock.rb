@@ -61,6 +61,7 @@ class FlexMock
       @mock = mock
       @method_definitions = {}
       @methods_proxied = []
+      @proxy_definition_module = nil
       unless safe_mode
         add_mock_method(:should_receive)
         MOCK_METHODS.each do |sym|
@@ -118,9 +119,9 @@ class FlexMock
 
     def add_mock_method(method_name)
       stow_existing_definition(method_name)
-      target_class_eval do
+      proxy_module_eval do
         define_method(method_name) { |*args, &block|
-          proxy = instance_variable_get("@flexmock_proxy") or
+          proxy = __flexmock_proxy or
             fail "Missing FlexMock proxy " +
                  "(for method_name=#{method_name.inspect}, self=\#{self})"
           proxy.send(method_name, *args, &block)
@@ -181,8 +182,15 @@ class FlexMock
     # Invoke the original definition of method on the object supported by
     # the stub.
     def flexmock_invoke_original(method, args)
-      method_proc = @method_definitions[method]
-      method_proc.call(*args)
+      if original_method = @method_definitions[method]
+        if Proc === args.last
+          block = args.last
+          args = args[0..-2]
+        end
+        original_method.bind(@obj).call(*args, &block)
+      else
+        raise ArgumentError, "no original method for #{method}"
+      end
     end
 
     # Verify that the mock has been properly called.  After verification,
@@ -194,9 +202,11 @@ class FlexMock
     # Remove all traces of the mocking framework from the existing object.
     def flexmock_teardown
       if ! detached?
-        @methods_proxied.each do |method_name|
-          remove_current_method(method_name)
-          restore_original_definition(method_name)
+        proxy_module_eval do
+          methods = instance_methods(false).to_a
+          methods.each do |m|
+            remove_method m
+          end
         end
         @obj.instance_variable_set("@flexmock_proxy", nil)
         @obj = nil
@@ -244,7 +254,7 @@ class FlexMock
 
     # The singleton class of the object.
     def target_singleton_class
-      class << @obj; self; end
+      @obj.singleton_class
     end
 
     # Evaluate a block (or string) in the context of the singleton
@@ -253,8 +263,16 @@ class FlexMock
       target_singleton_class.class_eval(*args, &block)
     end
 
-    def singleton?(method_name)
-      @obj.flexmock_singleton_defined?(method_name)
+    # Evaluate a block into the module we use to define the proxy methods
+    def proxy_module_eval(*args, &block)
+      if !@proxy_definition_module
+        obj = @obj
+        @proxy_definition_module = m = Module.new do
+          define_method(:__flexmock_proxy) { obj.instance_variable_get(:@flexmock_proxy) }
+        end
+        target_class_eval { prepend m }
+      end
+      @proxy_definition_module.class_eval(*args, &block)
     end
 
     # Hide the existing method definition with a singleton defintion
@@ -271,108 +289,43 @@ class FlexMock
     # Stow the existing method definition so that it can be recovered
     # later.
     def stow_existing_definition(method_name)
-      @methods_proxied << method_name
-      new_alias = create_alias_for_existing_method(method_name)
-      if new_alias
-        @method_definitions[method_name] = create_aliased_definition(@obj, new_alias)
+      if !@methods_proxied.include?(method_name)
+        @method_definitions[method_name] = target_class_eval { instance_method(method_name) }
+        @methods_proxied << method_name
       end
-      remove_current_method(method_name) if singleton?(method_name)
-    end
-
-    # Create a method definition that invokes the original behavior
-    # via the alias.
-    def create_aliased_definition(my_object, new_alias)
-      Proc.new { |*args|
-        block = nil
-        if Proc === args.last
-          block = args.last
-          args = args[0...-1]
-        end
-        my_object.send(new_alias, *args, &block)
-      }
-    end
-    private :create_aliased_definition
-
-    # Create an alias for the existing +method_name+.  Returns the new
-    # alias name.  If the aliasing process fails (because the method
-    # doesn't really exist, then return nil.
-    def create_alias_for_existing_method(method_name)
-      new_alias = new_name(method_name)
-      unless @obj.respond_to?(new_alias)
-        safe_alias_method(new_alias, method_name)
-      end
-      new_alias
-    end
-
-    # Create an alias for the existing method named +method_name+. It
-    # is possible that +method_name+ is implemented via a
-    # meta-programming, so we provide for the case that the
-    # method_name does not exist.
-    def safe_alias_method(new_alias, method_name)
-      target_class_eval do
-        begin
-          alias_method(new_alias, method_name)
-        rescue NameError
-          nil
-        end
-      end
+    rescue NameError
     end
 
     # Define a proxy method that forwards to our mock object.  The
     # proxy method is defined as a singleton method on the object
     # being mocked.
     def define_proxy_method(method_name)
-      if method_name.to_s =~ /=$/
-        eval_line = __LINE__ + 1
-        target_class_eval %{
-          def #{method_name}(*args, &block)
-            instance_variable_get('@flexmock_proxy').
-              mock.__send__(:#{method_name}, *args, &block)
+      if method_name =~ /=$/
+        proxy_module_eval do
+          define_method(method_name) do |*args, &block|
+            __flexmock_proxy.mock.__send__(method_name, *args, &block)
           end
-        }, __FILE__, eval_line
+        end
       else
-        eval_line = __LINE__ + 1
-        target_class_eval %{
+        proxy_module_eval <<-EOD
           def #{method_name}(*args, &block)
-            instance_variable_get('@flexmock_proxy').
-              mock.#{method_name}(*args, &block)
+            __flexmock_proxy.mock.#{method_name}(*args, &block)
           end
-        }, __FILE__, eval_line
-        _ = true       # make rcov recognize the above eval is covered
+        EOD
       end
     end
 
     # Restore the original singleton defintion for method_name that
     # was saved earlier.
     def restore_original_definition(method_name)
-      begin
-        method_def = @method_definitions[method_name]
-        if method_def
-          the_alias = new_name(method_name)
-          target_class_eval do
-            alias_method(method_name, the_alias)
-          end
-        end
-      rescue NameError => _
-        # Alias attempt failed
-        nil
+      proxy_module_eval do
+        remove_method method_name
       end
-    end
-
-    # Remove the current method if it is a singleton method of the
-    # object being mocked.
-    def remove_current_method(method_name)
-      target_class_eval { remove_method(method_name) }
     end
 
     # Have we been detached from the existing object?
     def detached?
       @obj.nil?
-    end
-
-    # Generate a name to be used to alias the original behavior.
-    def new_name(old_name)
-      "flexmock_original_behavior_for_#{old_name}"
     end
 
   end
