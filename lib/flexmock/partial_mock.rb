@@ -154,7 +154,6 @@ class FlexMock
       allocators = [:new] if allocators.empty?
       expectation_recorder = ExpectationRecorder.new
       allocators.each do |allocate_method|
-        check_allocate_method(allocate_method)
         flexmock_define_expectation(location, allocate_method).and_return { |*args|
           create_new_mocked_object(
             allocate_method, args, expectation_recorder, block)
@@ -244,13 +243,6 @@ class FlexMock
     end
 
     private
-
-    def check_allocate_method(allocate_method)
-      if allocate_method == :allocate && RUBY_VERSION >= "1.9"
-        fail UsageError,
-          "Cannot mock the allocation method using new_instances in Ruby 1.9"
-      end
-    end
 
     # The singleton class of the object.
     def target_singleton_class
