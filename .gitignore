@@ -7,3 +7,4 @@ html
 TAGS
 doc/examples/*.rdoc
 Gemfile.lock
+vendor/
