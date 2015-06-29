@@ -77,6 +77,13 @@ task :testunit do
   end
 end
 
+task :minitest do
+  files = FileList['test/minitest_integration/*_test.rb']
+  files.each do |file|
+    sh "ruby -Ilib:. #{file}"
+  end
+end
+
 task :rspec do
   sh "rspec test/rspec_integration"
 end
