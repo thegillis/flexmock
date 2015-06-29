@@ -45,6 +45,12 @@ class FlexMock
   class TestUnitFrameworkAdapter
     include Test::Unit::Assertions
 
+    attr_accessor :assertions
+
+    def initialize
+        @assertions = 0
+    end
+
     def make_assertion(msg, &block)
       unless yield
         msg = msg.call if msg.is_a?(Proc)
