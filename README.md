@@ -64,6 +64,33 @@ You can find an extended example of FlexMock in
 [Google Example](http://flexmock.rubyforge.org/files/doc/GoogleExample_rdoc.html
 "Example").
 
+## Minitest Integration
+
+FlexMock integrates nicely with Minitest. Just require the
+'flexmock/minitest' file at the top of your test file. The
+`flexmock` method will be available for mock creation, and
+any created mocks will be automatically validated and closed at the
+end of the individual test. It works with both tests unit-style
+(subclasses of Minitest::Test) and spec-style.
+
+Your test case will look something like this:
+
+```ruby
+  require 'flexmock/minitest'
+
+  class TestDog < Minitest::Test
+    def test_dog_wags
+      tail_mock = flexmock(:wag => :happy)
+      assert_equal :happy, tail_mock.wag
+    end
+  end
+```
+
+**NOTE:** If you don't want to automatically extend every Minitest::Test
+with the flexmock methods and overhead, then require the 'flexmock'
+file and explicitly include the FlexMock::Minitest module in each test
+case class where you wish to use mock objects.
+
 ## Test::Unit Integration
 
 FlexMock integrates nicely with Test::Unit. Just require the
