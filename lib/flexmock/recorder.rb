@@ -56,9 +56,8 @@ class FlexMock
     # Record an expectation for receiving the method +sym+ with the
     # given arguments.
     def method_missing(sym, *args, &block)
-      location = caller.first
       expectation = @mock.
-        flexmock_define_expectation(location, sym).
+        flexmock_define_expectation(caller, sym).
         and_return(&block)
       if strict?
         args = args.collect { |arg| eq(arg) }

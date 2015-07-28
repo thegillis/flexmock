@@ -40,7 +40,7 @@ class FlexMock
     # applied to the new expectation.
     def should_receive(*args, &block)
       @expectations.first.mock.
-        flexmock_define_expectation(caller.first, *args, &block)
+        flexmock_define_expectation(caller, *args, &block)
     end
 
     # Return a string representations

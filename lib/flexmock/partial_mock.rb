@@ -98,8 +98,7 @@ class FlexMock
     #
     # See Expectation for a list of declarators that can be used.
     def should_receive(*args)
-      location = caller.first
-      flexmock_define_expectation(location, *args)
+      flexmock_define_expectation(caller, *args)
     end
 
     def flexmock_define_expectation(location, *args)
@@ -150,7 +149,7 @@ class FlexMock
     def new_instances(*allocators, &block)
       fail ArgumentError, "new_instances requires a Class to stub" unless
         Class === @obj
-      location = caller.first
+      location = caller
       allocators = [:new] if allocators.empty?
       expectation_recorder = ExpectationRecorder.new
       allocators.each do |allocate_method|

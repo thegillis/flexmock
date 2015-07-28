@@ -191,8 +191,7 @@ class FlexMock
   # See Expectation for a list of declarators that can be used.
   #
   def should_receive(*args)
-    location = caller.first
-    flexmock_define_expectation(location, *args)
+    flexmock_define_expectation(caller, *args)
   end
 
   # Using +location+, define the expectations specified by +args+.
