@@ -425,8 +425,12 @@ class FlexMock
     def flexmock_location_filter
       yield
     rescue Exception => ex
-      ex.backtrace.insert(0, @location)
-      raise ex
+      bt = @location.dup
+      flexmock_dir = File.expand_path(File.dirname(__FILE__))
+      while bt.first.start_with?(flexmock_dir)
+          bt.shift
+      end
+      raise ex, ex.message, bt
     end
 
   end
