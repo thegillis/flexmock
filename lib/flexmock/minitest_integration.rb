@@ -71,14 +71,22 @@ class FlexMock
       @assertions = 0
     end
 
+    class Error < RuntimeError; end
+
+    def filtered_backtrace
+      bt = caller
+      flexmock_dir = File.expand_path(File.dirname(__FILE__))
+      while bt.first.start_with?(flexmock_dir)
+          bt.shift
+      end
+      bt
+    end
+
     def make_assertion(msg, &block)
       unless yield
         msg = msg.call if msg.is_a?(Proc)
-        assert(false, msg)
+        raise Error, msg, filtered_backtrace
       end
-    rescue assertion_failed_error => ex
-      ex.message.sub!(/Expected block to return true value./,'')
-      raise ex
     end
 
     def assertion_failed_error
