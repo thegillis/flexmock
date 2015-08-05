@@ -1,5 +1,16 @@
 = Changes for FlexMock
 
+== Version 2.0.0
+
+* bump to 2.0 to mark the change of maintainership. I hope I won't disappoint.
+* require 'flexmock' no longer pulls test_unit_integration. Require the latter
+  explicitely
+* dropped support for pre-2.0 Rubies
+* added explicit minitest support. This makes the minitest integration much
+  nicer to work with (in particular, the flexmock_teardown is now executed "just
+  at the right place"), and fixes issues with minitest 5
+* partial mocks now supports prepended modules
+
 == Version 1.0.0
 
 * Added spy support.

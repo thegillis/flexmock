@@ -3,15 +3,15 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 1.3.1
+Version :: 2.0
 
 # Links
 
-* **Documents** -- http://flexmock.rubyforge.org
+* **Documents** -- http://rubydoc.info/gems/flemxock
 * **RubyGems**   -- Install with: `gem install flexmock`
-* **Source** -- https://github.com/jimweirich/flexmock
-* **Bug Reports / Issue Tracking** -- https://github.com/jimweirich/flexmock/issues
-* **Continuous Integration** -- http://travis-ci.org/#!/jimweirich/flexmock
+* **Source** -- https://github.com/doudou/flexmock
+* **Bug Reports / Issue Tracking** -- https://github.com/doudou/flexmock/issues
+* **Continuous Integration** -- http://travis-ci.org/#!/doudou/flexmock
 
 ## Installation
 
@@ -1195,16 +1195,14 @@ Refer to the following documents for examples of using FlexMock:
 ## License
 
 Copyright 2003-2013 by Jim Weirich (jim.weirich@gmail.com).
-All rights reserved.
+Copyright 2014- by Sylvain Joyeux (sylvain.joyeux@m4x.org)
 
-Permission is granted for use, copying, modification, distribution,
-and distribution of modified versions of this work as long as the
-above copyright notice is included.
+Licensed under [the MIT license](http://opensource.org/licenses/MIT)
 
 # Other stuff
 
-* **Author** -- Jim Weirich <jim.weirich@gmail.com>
-* **Requires** -- Ruby 1.9.2 or later (also works with Ruby 1.8.7)
+* **Author** -- Jim Weirich <jim.weirich@gmail.com> and Sylvain Joyeux <sylvain.joyeux@m4x.org>
+* **Requires** -- Ruby 2.0 or later
 
 ## See Also
 

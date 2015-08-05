@@ -12,7 +12,6 @@ task :noop
 require 'rubygems'
 require 'rake/clean'
 require 'rake/testtask'
-require 'rake/contrib/rubyforgepublisher'
 
 require 'rubygems/package_task'
 
@@ -29,22 +28,7 @@ EXAMPLE_DOC = EXAMPLE_RB.ext('rdoc')
 CLOBBER.include(EXAMPLE_DOC)
 CLEAN.include('pkg/flexmock-*').exclude("pkg/*.gem")
 
-PKG_FILES = FileList[
-  '[A-Z]*',
-  'lib/**/*.rb',
-  'test/**/*.rb',
-  '*.blurb',
-  'install.rb'
-]
-
-RDOC_FILES = FileList[
-  'doc/index.rdoc',
-  'CHANGES',
-  'lib/**/*.rb',
-  'doc/**/*.rdoc',
-] + EXAMPLE_DOC
-
-task :default => [:test_all, :rspec, :testunit]
+task :default => [:test_all, :rspec, :minitest]
 task :test_all => [:test]
 task :test_units => [:test]
 task :ta => [:test_all]
@@ -88,30 +72,17 @@ task :rspec do
   sh "rspec test/rspec_integration"
 end
 
-# RCov Target --------------------------------------------------------
+# Coverage Target --------------------------------------------------------
 
-begin
-  require 'rcov/rcovtask'
-
-  Rcov::RcovTask.new do |t|
-    t.libs << "test"
-    t.rcov_opts = ['-xRakefile', '-xrakefile', '-xpublish.rf', '-x/Lib*', '--text-report', '--sort', 'coverage']
-    t.test_files = FileList['test/test*.rb']
-    t.verbose = true
-  end
-rescue LoadError => ex
+task 'coverage' do
+  ENV['COVERAGE'] = 1
+  Rake::Task[:test].invoke
 end
 
-# RDoc Target --------------------------------------------------------
+# Documentation Target --------------------------------------------------------
 
-task :rdoc => ["html/index.html", :fixcss]
-
-file "html/index.html" => ["Rakefile"] + RDOC_FILES do
-  Bundler.with_clean_env do
-    sh "rdoc -o html --title FlexMock --line-numbers -m doc/index.rdoc #{RDOC_FILES}"
-  end
-end
-
+require 'yard'
+require 'yard/rake/yardoc_task'
 EXAMPLE_RB.zip(EXAMPLE_DOC).each do |source, target|
   file target => source do
     open(source, "r") do |ins|
@@ -124,98 +95,13 @@ EXAMPLE_RB.zip(EXAMPLE_DOC).each do |source, target|
     end
   end
 end
+YARD::Rake::YardocTask.new(:doc => [*EXAMPLE_RB, "README.md"])
 
 file "README.md" => ["Rakefile", "lib/flexmock/version.rb"] do
   ruby %{-i.bak -pe '$_.sub!(/^Version: *((\\d+|beta|rc)\\.)+\\d+ *$/i, "Version :: #{PKG_VERSION}")' README.md} # "
 end
 
-desc "Fix the Darkfish CSS so that paragraphs in lists have a bit of spacing"
-task :fixcss do
-  open("html/rdoc.css") do |ins|
-    open("html/rdoc.new", "w") do |outs|
-      count = 0
-      ins.each do |line|
-        if line =~ /^ *margin: +0;$/
-          count += 1
-          if count == 3
-            line = "  margin: 0.5em 0;"
-          end
-        end
-        outs.puts line
-      end
-    end
-  end
-  rm_f "html/rdoc.css"
-  mv "html/rdoc.new", "html/rdoc.css"
-end
-
 # Package Task -------------------------------------------------------
-
-if ! defined?(Gem)
-  puts "Package Target requires RubyGEMs"
-else
-  spec = Gem::Specification.new do |s|
-
-    #### Basic information.
-
-    s.name = 'flexmock'
-    s.version = PKG_VERSION
-    s.summary = "Simple and Flexible Mock Objects for Testing"
-    s.description = %{
-      FlexMock is a extremely simple mock object class compatible
-      with the Test::Unit framework.  Although the FlexMock's
-      interface is simple, it is very flexible.
-    }				# '
-
-    #### Dependencies and requirements.
-
-    #s.add_dependency('log4r', '> 1.0.4')
-    #s.requirements << ""
-
-    #### Which files are to be included in this gem?  Everything!  (Except CVS directories.)
-
-    s.files = PKG_FILES.to_a
-
-    #### C code extensions.
-
-    #s.extensions << "ext/rmagic/extconf.rb"
-
-    #### Load-time details: library and application (you will need one or both).
-
-    s.require_path = 'lib'                         # Use these for libraries.
-
-    #### Documentation and testing.
-
-    s.has_rdoc = true
-    s.extra_rdoc_files = RDOC_FILES.reject { |fn| fn =~ /\.rb$/ }.to_a
-    s.rdoc_options <<
-      '--title' <<  'FlexMock' <<
-      '--main' << 'README.rdoc' <<
-      '--line-numbers'
-
-    #### Author and project details.
-
-    s.author = "Jim Weirich"
-    s.email = "jim.weirich@gmail.com"
-    s.homepage = "https://github.com/jimweirich/flexmock"
-  end
-
-  Gem::PackageTask.new(spec) do |pkg|
-    pkg.need_zip = true
-    pkg.need_tar = false
-  end
-end
-
-require 'rake/contrib/publisher'
-require 'rake/contrib/sshpublisher'
-
-publisher = Rake::CompositePublisher.new
-publisher.add(Rake::RubyForgePublisher.new('flexmock', 'jimweirich'))
-
-desc "Publish the documentation on public websites"
-task :publish => [:rdoc] do
-  publisher.upload
-end
 
 task :specs do
   specs = FileList['test/spec_*.rb']

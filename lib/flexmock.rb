@@ -10,4 +10,3 @@
 #+++
 
 require 'flexmock/base'
-require 'flexmock/test_unit_integration'

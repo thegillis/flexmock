@@ -8,3 +8,7 @@ TAGS
 doc/examples/*.rdoc
 Gemfile.lock
 vendor/
+.*.sw?
+.yardoc/
+.bundle/
+html/
