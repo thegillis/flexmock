@@ -17,22 +17,12 @@ class TestFlexmockDefaultFrameworkAdapter < Minitest::Test
   end
 
   def test_assert_block_raises_exception
-    assert_raise(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
-      @adapter.make_assertion("failure message") { false }
+    assert_raises(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
+      @adapter.check("failure message") { false }
     }
   end
 
   def test_make_assertion_doesnt_raise_exception_when_making_assertion
-    @adapter.make_assertion("failure message") { true }
-  end
-
-  def test_make_assertion_doesnt_raise_exception_when_asserting_equal
-    @adapter.assert_equal("a", "a", "no message")
-  end
-
-  def test_assert_equal_can_fail
-    assert_raise(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
-      @adapter.assert_equal("a", "b", "a should not equal b")
-    }
+    @adapter.check("failure message") { true }
   end
 end

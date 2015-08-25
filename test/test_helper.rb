@@ -10,12 +10,16 @@ class FlexMock
       FlexMock.framework_adapter.assertion_failed_error
     end
 
+    def check_failed_error
+      FlexMock.framework_adapter.check_failed_error
+    end
+
     # Assertion helper used to assert validation failure.  If a
     # message is given, then the error message should match the
     # expected error message.
-    def assert_failure(options={}, &block)
+    def assert_failure(klass, options={}, &block)
       message = options[:message]
-      ex = assert_raises(assertion_failed_error) { yield }
+      ex = assert_raises(klass) { yield }
       if message
         case message
         when Regexp
@@ -30,8 +34,8 @@ class FlexMock
     # Similar to assert_failure, but assumes that a mock generated
     # error object is return, so additional tests on the backtrace are
     # added.
-    def assert_mock_failure(options={}, &block)
-      ex = assert_failure(options, &block)
+    def assert_mock_failure(klass, options={}, &block)
+      ex = assert_failure(klass, options, &block)
       file = eval("__FILE__", block.binding)
       assert_matching_line(ex, file, options)
     end
@@ -60,7 +64,7 @@ class FlexMock
           ex.backtrace.any? { |bt| loc_re =~ bt }
         }
       else
-        assert_match(loc_re, ex.backtrace.first)
+        assert_match(loc_re, ex.backtrace.first, "BACKTRACE:\n  #{ex.backtrace.join("\n  ")}")
       end
 
       ex

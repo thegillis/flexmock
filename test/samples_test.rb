@@ -178,7 +178,7 @@ class TestDb < Minitest::Test
     db.should_receive(:query).and_return([1,2,3]).ordered
     db.should_receive(:update).and_return(nil).ordered
     # test code here
-    assert_raises(assertion_failed_error) do
+    assert_raises(check_failed_error) do
       db.update
       db.query
     end

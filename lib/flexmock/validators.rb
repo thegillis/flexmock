@@ -50,11 +50,12 @@ class FlexMock
       @limit.to_s
     end
 
+    class ValidationFailed < RuntimeError
+    end
+
     def validate_count(n, &block)
-      @exp.flexmock_location_filter do
-        FlexMock.framework_adapter.make_assertion(
-          lambda { construct_validation_count_error_message(n) },
-          &block)
+      unless yield
+        raise ValidationFailed, construct_validation_count_error_message(n)
       end
     end
 

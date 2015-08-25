@@ -26,14 +26,17 @@ class FlexMock
       SpecModule::Expectations.fail_with(msg) unless yield
     end
 
-    def assert_equal(a, b, msg=nil)
-      message = msg || "Expected equal"
-      make_assertion(message + "\n<#{a}> expected, but was\n<#{b}>") { a == b }
+    def check(msg, &block)
+      check(msg, &block)
     end
 
     class AssertionFailedError < StandardError; end
+
     def assertion_failed_error
       SpecModule::Expectations::ExpectationNotMetError
+    end
+    def check_failed_error
+      assertion_failed_error
     end
   end
 

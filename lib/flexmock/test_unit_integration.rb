@@ -61,10 +61,18 @@ class FlexMock
       raise ex
     end
 
+    def check(msg, &block)
+      make_assertion(msg, &block)
+    end
+
     def assertion_failed_error
       defined?(Test::Unit::AssertionFailedError) ?
         Test::Unit::AssertionFailedError :
         MiniTest::Assertion
+    end
+
+    def check_failed_error
+      assertion_failed_error
     end
   end
 

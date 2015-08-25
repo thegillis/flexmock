@@ -115,7 +115,7 @@ class TestDemeterMocking < Minitest::Test
   def test_conflicting_mock_declarations_in_reverse_order_does_not_raise_error
     # Not all conflicting definitions can be detected.
     m = flexmock("A")
-    assert_failure do
+    assert_failure(assertion_failed_error) do
       m.should_receive("child.other").and_return(:other)
       m.should_receive("child").and_return(:xyzzy)
       assert_equal :xyzzy, m.child.other

@@ -212,8 +212,9 @@ class FlexMock
             remove_method m
           end
         end
-        if @obj.instance_variable_defined?("@flexmock_proxy")
-          @obj.instance_variable_get("@flexmock_proxy").proxy = nil
+        if @obj.instance_variable_defined?(:@flexmock_proxy) &&
+            (box = @obj.instance_variable_get(:@flexmock_proxy))
+          box.proxy = nil
         end
         @obj = nil
       end
@@ -267,7 +268,11 @@ class FlexMock
       if !@proxy_definition_module
         obj = @obj
         @proxy_definition_module = m = Module.new do
-          define_method(:__flexmock_proxy) { obj.instance_variable_get(:@flexmock_proxy).proxy }
+          define_method(:__flexmock_proxy) do
+            if box = obj.instance_variable_get(:@flexmock_proxy)
+              box.proxy
+            end
+          end
         end
         target_class_eval { prepend m }
       end

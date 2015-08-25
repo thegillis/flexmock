@@ -92,7 +92,7 @@ class TestFlexMock < Minitest::Test
   end
 
   def test_zero_counts
-    assert_raises(assertion_failed_error) do
+    assert_raises(check_failed_error) do
       FlexMock.use { |m|
         s { m.mock_handle(:blip, 0) }
         m.blip

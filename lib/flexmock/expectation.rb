@@ -68,10 +68,22 @@ class FlexMock
       result
     end
 
+    # Validate that this expectation is eligible for an extra call
+    def validate_eligible
+      @count_validators.each do |v|
+        if !v.eligible?(@actual_count)
+          v.validate(@actual_count + 1)
+        end
+      end
+    rescue CountValidator::ValidationFailed => e
+      FlexMock.framework_adapter.check(e.message) { false }
+    end
+
     # Verify the current call with the given arguments matches the
     # expectations recorded in this object.
     def verify_call(*args)
       validate_order
+      validate_eligible
       @actual_count += 1
       perform_yielding(args)
       return_value(args)
@@ -140,6 +152,8 @@ class FlexMock
       @count_validators.each do |v|
         v.validate(@actual_count)
       end
+    rescue CountValidator::ValidationFailed => e
+      FlexMock.framework_adapter.make_assertion(e.message, @location) { false }
     end
 
     # Does the argument list match this expectation's argument

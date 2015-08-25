@@ -45,9 +45,10 @@ class TestStubbing < Minitest::Test
     obj = Object.new
     flexmock(obj)
     obj.instance_eval { @flexmock_proxy = nil }
-    assert_raises(RuntimeError, /missing.*proxy/i) do
+    ex = assert_raises(RuntimeError) do
       obj.should_receive(:hi).and_return(:stub_hi)
     end
+    assert(ex.message =~ /missing.*proxy/i)
   end
 
   def test_stub_command_add_behavior_to_arbitrary_objects_via_flexmock
@@ -121,7 +122,7 @@ class TestStubbing < Minitest::Test
     assert_equal :growl, dog.bark
     partial_mock.flexmock_teardown
     assert_equal :woof, dog.bark
-    assert_equal nil, dog.instance_variable_get("@flexmock_proxy")
+    assert_equal nil, dog.instance_variable_get("@flexmock_proxy").proxy
   end
 
   def test_original_missing_behavior_can_be_restored

@@ -229,12 +229,9 @@ class FlexMock
   # that the mock name is added to the error message .
   def flexmock_wrap(&block)
     yield
-  rescue FlexMock.framework_adapter.assertion_failed_error => ex
-    raise FlexMock.framework_adapter.assertion_failed_error,
-    "in mock '#{@flexmock_name}': #{ex.message}",
-    ex.backtrace
+  rescue FlexMock.framework_adapter.assertion_failed_error, FlexMock.framework_adapter.check_failed_error => ex
+    raise ex, "in mock '#{@flexmock_name}': #{ex.message}", ex.backtrace
   end
-
 
   # Override the existing definition of method +method_name+ in the
   # mock. Most methods depend on the method_missing trick to be

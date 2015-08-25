@@ -20,8 +20,8 @@ class FlexMock
       end
     end
 
-    def assert_equal(a, b, msg=nil)
-      make_assertion(msg || "Expected equal") { a == b }
+    def check(msg, &block)
+      make_assertion(msg, &block)
     end
 
     class AssertionFailedError < StandardError; end

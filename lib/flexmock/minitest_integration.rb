@@ -57,6 +57,8 @@ class FlexMock
     end
   end
 
+  class CheckFailedError < RuntimeError; end
+
   # Adapter for adapting FlexMock to the Test::Unit framework.
   #
   class MinitestFrameworkAdapter
@@ -72,8 +74,6 @@ class FlexMock
       @assertions = 0
     end
 
-    class Error < RuntimeError; end
-
     def filtered_backtrace
       bt = caller
       flexmock_dir = File.expand_path(File.dirname(__FILE__))
@@ -83,15 +83,26 @@ class FlexMock
       bt
     end
 
-    def make_assertion(msg, &block)
+    def make_assertion(msg, backtrace = caller, &block)
+      assert(yield, msg)
+    rescue Exception => e
+      e.set_backtrace backtrace
+      raise e
+    end
+
+    def check(msg, &block)
       unless yield
         msg = msg.call if msg.is_a?(Proc)
-        raise Error, msg, filtered_backtrace
+        raise CheckFailedError, msg, filtered_backtrace
       end
     end
 
     def assertion_failed_error
       MiniTest::Assertion
+    end
+
+    def check_failed_error
+      CheckFailedError
     end
   end
 
