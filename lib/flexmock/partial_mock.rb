@@ -28,21 +28,27 @@ class FlexMock
 
     attr_reader :mock
 
+    ProxyBox = Struct.new :proxy
+
     # Make a partial mock proxy and install it on the target +obj+.
     def self.make_proxy_for(obj, container, name, safe_mode)
       name ||= "flexmock(#{obj.class.to_s})"
       if ! proxy_defined_on?(obj)
         mock = FlexMock.new(name, container)
         proxy = PartialMockProxy.new(obj, mock, safe_mode)
-        obj.instance_variable_set("@flexmock_proxy", proxy)
+        if obj.instance_variable_defined?("@flexmock_proxy")
+          obj.instance_variable_get("@flexmock_proxy").proxy = proxy
+        else
+          obj.instance_variable_set("@flexmock_proxy", ProxyBox.new(proxy))
+        end
       end
-      obj.instance_variable_get("@flexmock_proxy")
+      obj.instance_variable_get("@flexmock_proxy").proxy
     end
 
     # Is there a mock proxy defined on the domain object?
     def self.proxy_defined_on?(obj)
       obj.instance_variable_defined?("@flexmock_proxy") &&
-        obj.instance_variable_get("@flexmock_proxy")
+        obj.instance_variable_get("@flexmock_proxy").proxy
     end
 
     # The following methods are added to partial mocks so that they
@@ -206,7 +212,9 @@ class FlexMock
             remove_method m
           end
         end
-        @obj.instance_variable_set("@flexmock_proxy", nil)
+        if @obj.instance_variable_defined?("@flexmock_proxy")
+          @obj.instance_variable_get("@flexmock_proxy").proxy = nil
+        end
         @obj = nil
       end
     end
@@ -259,7 +267,7 @@ class FlexMock
       if !@proxy_definition_module
         obj = @obj
         @proxy_definition_module = m = Module.new do
-          define_method(:__flexmock_proxy) { obj.instance_variable_get(:@flexmock_proxy) }
+          define_method(:__flexmock_proxy) { obj.instance_variable_get(:@flexmock_proxy).proxy }
         end
         target_class_eval { prepend m }
       end
