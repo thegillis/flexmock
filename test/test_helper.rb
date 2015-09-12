@@ -1,8 +1,20 @@
+begin
+    require 'simplecov'
+    require 'coveralls'
+    SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+        SimpleCov::Formatter::HTMLFormatter,
+        Coveralls::SimpleCov::Formatter
+    ]
+    SimpleCov.start
+rescue LoadError
+end
+
 require 'minitest/autorun'
 require 'fileutils'
+require 'redirect_error'
 require 'flexmock'
 require 'flexmock/minitest_integration'
-require 'redirect_error'
+
 
 class FlexMock
   module Minitest
