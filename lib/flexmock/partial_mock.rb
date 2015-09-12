@@ -319,14 +319,6 @@ class FlexMock
       end
     end
 
-    # Restore the original singleton defintion for method_name that
-    # was saved earlier.
-    def restore_original_definition(method_name)
-      proxy_module_eval do
-        remove_method method_name
-      end
-    end
-
     # Have we been detached from the existing object?
     def detached?
       @obj.nil?
