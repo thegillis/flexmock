@@ -17,9 +17,7 @@ spec = Gem::Specification.new do |s|
   #### Dependencies and requirements.
 
   s.add_development_dependency 'minitest'
-  s.add_development_dependency 'rspec'
-  s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'yard'
+  s.add_development_dependency 'rake'
 
   #### Which files are to be included in this gem?  Everything!  (Except CVS directories.)
 
