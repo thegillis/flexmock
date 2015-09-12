@@ -11,7 +11,7 @@
 
 require "test_helper"
 
-class UndefinedTest < Test::Unit::TestCase
+class UndefinedTest < Minitest::Test
   def test_undefined_method_calls_return_undefined
     assert_undefined undefined.some_random_undefined_method
   end

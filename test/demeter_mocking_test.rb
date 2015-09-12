@@ -2,8 +2,8 @@
 
 require 'test_helper'
 
-class TestDemeterMocking < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDemeterMocking < Minitest::Test
+  include FlexMock::Minitest
 
   def test_demeter_mocking_basics
     m = flexmock("A")
@@ -64,7 +64,7 @@ class TestDemeterMocking < Test::Unit::TestCase
 
   def test_conflicting_mock_declarations_raises_an_error
     m = flexmock("A")
-    ex = assert_raise(FlexMock::UsageError) do
+    ex = assert_raises(FlexMock::UsageError) do
       m.should_receive("child").and_return(:xyzzy)
       m.should_receive("child.other").and_return(:other)
       m.child.other
@@ -152,7 +152,7 @@ class TestDemeterMocking < Test::Unit::TestCase
     [
       'a(2)', '0a', 'a-b', 'a b', ' ', 'a ', ' b', 'a!b', "a?b", 'a=b'
     ].each do |method|
-      assert_raise FlexMock::UsageError do m.should_receive(method) end
+      assert_raises FlexMock::UsageError do m.should_receive(method) end
     end
   end
 
@@ -161,7 +161,7 @@ class TestDemeterMocking < Test::Unit::TestCase
     [
       'a', 'a?', 'a!', 'a=', 'z0', 'save!'
     ].each do |method|
-      assert_nothing_raised do m.should_receive(method) end
+      m.should_receive(method)
     end
   end
 

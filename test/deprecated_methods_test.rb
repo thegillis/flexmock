@@ -12,8 +12,8 @@
 require 'test_helper'
 require 'flexmock/deprecated_methods'
 
-class TestFlexMock < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestFlexMock < Minitest::Test
+  include FlexMock::Minitest
   include FlexMock::RedirectError
 
   def s(&block)
@@ -79,7 +79,7 @@ class TestFlexMock < Test::Unit::TestCase
       @mock.flexmock_verify
     rescue assertion_failed_error => err
     end
-    assert_not_nil err
+    refute_nil err
   end
 
   def test_undetermined_counts
@@ -173,7 +173,7 @@ class TestFlexMock < Test::Unit::TestCase
     got_it = false
     s { @mock.mock_handle(:xyzzy) { got_it = true } }
     method_proc = @mock.method(:xyzzy)
-    assert_not_nil method_proc
+    refute_nil method_proc
     method_proc.call([])
     assert(got_it, "method proc should run")
   end
@@ -181,13 +181,13 @@ class TestFlexMock < Test::Unit::TestCase
   def test_method_returns_do_nothing_proc_for_missing_methods
     @mock.mock_ignore_missing
     method_proc = @mock.method(:plugh)
-    assert_not_nil method_proc
+    refute_nil method_proc
     assert_equal FlexMock.undefined, method_proc.call
   end
 end
 
-class TestDeprecatedOrderingMethods < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDeprecatedOrderingMethods < Minitest::Test
+  include FlexMock::Minitest
   include FlexMock::RedirectError
 
   def test_deprecated_ordering_methods
@@ -202,8 +202,8 @@ class TestDeprecatedOrderingMethods < Test::Unit::TestCase
   end
 end
 
-class TestAnyInstance < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestAnyInstance < Minitest::Test
+  include FlexMock::Minitest
   include FlexMock::RedirectError
 
   class Dog

@@ -11,8 +11,8 @@
 
 require 'test_helper'
 
-class TestStubbing < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestStubbing < Minitest::Test
+  include FlexMock::Minitest
 
   class Dog
     def bark
@@ -130,7 +130,7 @@ class TestStubbing < Test::Unit::TestCase
     partial_mock.should_receive(:hi).once.and_return(:ok)
     assert_equal :ok, obj.hi
     partial_mock.flexmock_teardown
-    assert_raise(NoMethodError) { obj.hi }
+    assert_raises(NoMethodError) { obj.hi }
   end
 
   def test_multiple_stubs_on_single_method_can_be_restored_missing_method
@@ -141,7 +141,7 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal :ok, obj.hi(1)
     assert_equal :ok, obj.hi(2)
     partial_mock.flexmock_teardown
-    assert_raise(NoMethodError) { obj.hi }
+    assert_raises(NoMethodError) { obj.hi }
   end
 
   def test_original_behavior_is_restored_when_multiple_methods_are_mocked
@@ -150,7 +150,7 @@ class TestStubbing < Test::Unit::TestCase
     flexmock(dog).should_receive(:wag).and_return(:happy)
     flexmock(dog).flexmock_teardown
     assert_equal :woof, dog.bark
-    assert_raise(NoMethodError) { dog.wag }
+    assert_raises(NoMethodError) { dog.wag }
   end
 
   def test_original_behavior_is_restored_on_class_objects
@@ -231,7 +231,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_not_calling_stubbed_method_is_an_error
     dog = Dog.new
     flexmock(dog).should_receive(:bark).once
-    assert_raise(assertion_failed_error) {
+    assert_raises(assertion_failed_error) {
       flexmock(dog).flexmock_verify
     }
     dog.bark
@@ -241,7 +241,7 @@ class TestStubbing < Test::Unit::TestCase
     obj = Object.new
     partial_mock = flexmock(obj)
     partial_mock.should_receive(:hi).once.and_return(:ok)
-    assert_raise(assertion_failed_error) {
+    assert_raises(assertion_failed_error) {
       partial_mock.flexmock_verify
     }
   end
@@ -322,7 +322,7 @@ class TestStubbing < Test::Unit::TestCase
   def xtest_object_methods_method_is_not_used_in_singleton_checks
     obj = NoMethods.new
     def obj.mock() :original end
-    assert_nothing_raised {  flexmock(obj) }
+    flexmock(obj)
   end
 
   def test_partial_mocks_with_mock_method_singleton_colision_have_original_defs_restored
@@ -356,7 +356,7 @@ class TestStubbing < Test::Unit::TestCase
 
   def test_safe_partial_mocks_require_block
     dog = Dog.new
-    assert_raise(FlexMock::UsageError) { flexmock(:safe, dog) }
+    assert_raises(FlexMock::UsageError) { flexmock(:safe, dog) }
   end
 
   def test_safe_partial_mocks_are_actually_mocked
@@ -389,7 +389,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_liar_actually_lies
     liar = Liar.new
     assert liar.respond_to?(:not_defined)
-    assert_raise(NoMethodError) { liar.not_defined }
+    assert_raises(NoMethodError) { liar.not_defined }
   end
 
   def test_partial_mock_where_respond_to_is_true_yet_method_is_not_there
@@ -427,7 +427,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_partial_mocks_disallow_stubbing_undefined_methods_when_using_on
     dog = Dog.new
     flexmock(dog, :on, Dog)
-    assert_raise(NoMethodError, /meow.*explicitly/) do
+    assert_raises(NoMethodError, /meow.*explicitly/) do
       dog.should_receive(:meow).and_return(:something)
     end
   end

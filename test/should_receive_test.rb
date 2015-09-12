@@ -29,8 +29,8 @@ class Cat
   end
 end
 
-class TestFlexMockShoulds < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestFlexMockShoulds < Minitest::Test
+  include FlexMock::Minitest
 
   # Expected error messages on failures
   COUNT_ERROR_MESSAGE = /\bcalled\s+incorrect\s+number\s+of\s+times\b/
@@ -165,7 +165,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_failure_if_no_block_given
     FlexMock.use do |m|
       m.should_receive(:hi).and_yield(:one, :two).once
-      assert_raise(FlexMock::MockError) do m.hi end
+      assert_raises(FlexMock::MockError) do m.hi end
     end
   end
 
@@ -221,7 +221,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_and_raises_with_exception_class_throws_exception
     FlexMock.use do |m|
       m.should_receive(:failure).and_raise(MyError)
-      assert_raise MyError do
+      assert_raises MyError do
         m.failure
       end
     end
@@ -230,7 +230,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_and_raises_with_arguments_throws_exception_made_with_args
     FlexMock.use do |m|
       m.should_receive(:failure).and_raise(MyError, "my message")
-      ex = assert_raise MyError do
+      ex = assert_raises MyError do
         m.failure
       end
       assert_equal "my message", ex.message
@@ -241,7 +241,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use do |m|
       err = MyError.new
       m.should_receive(:failure).and_raise(err)
-      ex = assert_raise MyError do
+      ex = assert_raises MyError do
         m.failure
       end
       assert_equal err, ex
@@ -251,7 +251,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_raises_is_an_alias_for_and_raise
     FlexMock.use do |m|
       m.should_receive(:failure).raises(RuntimeError)
-      assert_raise RuntimeError do
+      assert_raises RuntimeError do
         m.failure
       end
     end
@@ -262,9 +262,9 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       m.should_receive(:failure).
         and_raise(RuntimeError, "ONE").
         and_raise(RuntimeError, "TWO")
-      ex = assert_raise RuntimeError do m.failure end
+      ex = assert_raises RuntimeError do m.failure end
       assert_equal "ONE", ex.message
-      ex = assert_raise RuntimeError do m.failure end
+      ex = assert_raises RuntimeError do m.failure end
       assert_equal "TWO", ex.message
     end
   end
@@ -893,10 +893,8 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       x.should_receive(:one).ordered
       y.should_receive(:two).ordered
 
-      assert_nothing_raised do
-        y.two
-        x.one
-      end
+      y.two
+      x.one
     end
   end
 
@@ -983,7 +981,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_expectations_with_count_constraints_can_by_marked_as_default
     m = flexmock("m")
     m.should_receive(:foo).and_return(:bar).once.by_default
-    assert_raise assertion_failed_error do
+    assert_raises assertion_failed_error do
       flexmock_teardown
     end
   end
@@ -1000,7 +998,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     m = flexmock("m")
     m.should_receive(:foo).with(1).and_return(:bar).once.by_default
     m.should_receive(:foo).with(2).and_return(:baz).once
-    assert_raise assertion_failed_error do
+    assert_raises assertion_failed_error do
       # This expectation should be hidded by the non-result
       m.foo(1)
     end
@@ -1012,7 +1010,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     m.should_receive(:foo).ordered.by_default
     m.should_receive(:bar).ordered.by_default
     m.bar
-    assert_raise assertion_failed_error do m.foo end
+    assert_raises assertion_failed_error do m.foo end
   end
 
   def test_ordered_default_expectations_can_be_overridden
@@ -1039,9 +1037,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_by_default_at_mock_level_does_nothing_with_no_expectations
-    assert_nothing_raised do
-      flexmock("m").by_default
-    end
+    flexmock("m").by_default
   end
 
   def test_partial_mocks_can_have_default_expectations
@@ -1061,7 +1057,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     mock = flexmock("mock")
     exp = mock.should_receive(:foo).and_return(:first).once
     mock.should_receive(:foo).and_return(:second)
-    ex = assert_raise(FlexMock::UsageError) do
+    ex = assert_raises(FlexMock::UsageError) do
       exp.by_default
     end
     assert_match %r(previously defined), ex.message
@@ -1090,7 +1086,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     rescue Exception => ex
       exception = ex
     end
-    assert_not_nil exception
+    refute_nil exception
     assert_match(/#{file_name_re}:#{line_no}/, exception.backtrace.first)
   end
 
@@ -1132,7 +1128,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
 
 end
 
-class TestFlexMockShouldsWithInclude < Test::Unit::TestCase
+class TestFlexMockShouldsWithInclude < Minitest::Test
   include FlexMock::ArgumentTypes
   def test_include_enables_unqualified_arg_type_references
     FlexMock.use("x") do |m|
@@ -1142,9 +1138,9 @@ class TestFlexMockShouldsWithInclude < Test::Unit::TestCase
   end
 end
 
-class TestFlexMockArgTypesDontLeak < Test::Unit::TestCase
+class TestFlexMockArgTypesDontLeak < Minitest::Test
   def test_unqualified_arg_type_references_are_undefined_by_default
-    ex = assert_raise(NameError) do
+    ex = assert_raises(NameError) do
       FlexMock.use("x") do |m|
         m.should_receive(:hi).with(any).once
         m.hi(1)

@@ -1,16 +1,11 @@
 require 'minitest/autorun'
-require 'flexmock/minitest'
-
-if !defined?(Minitest::Test)
-  require 'test/unit'
-end
 require 'fileutils'
-
 require 'flexmock'
+require 'flexmock/minitest_integration'
 require 'redirect_error'
 
 class FlexMock
-  module TestCase
+  module Minitest
     def assertion_failed_error
       FlexMock.framework_adapter.assertion_failed_error
     end

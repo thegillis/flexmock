@@ -11,8 +11,8 @@
 
 require 'test_helper'
 
-class TestRecordMode < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestRecordMode < Minitest::Test
+  include FlexMock::Minitest
 
   def test_recording_mode_works
     mock = flexmock("mock")
@@ -62,7 +62,7 @@ class TestRecordMode < Test::Unit::TestCase
     mock = flexmock("mock")
     mock.should_expect do |r|
       r.f(1, Proc) { |arg, block|
-        assert_not_nil block
+        refute_nil block
         block.call
       }
     end

@@ -11,8 +11,8 @@
 
 require 'test_helper'
 
-class TestNaming < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestNaming < Minitest::Test
+  include FlexMock::Minitest
 
   def test_name
     m = flexmock("m")
@@ -21,7 +21,7 @@ class TestNaming < Test::Unit::TestCase
 
   def test_name_in_no_handler_found_error
     m = flexmock("mmm")
-    ex = assert_raises(assertion_failed_error) {
+    ex = assert_raises(check_failed_error) {
       m.should_receive(:xx).with(1)
       m.xx(2)
     }

@@ -3,8 +3,8 @@
 require 'test_helper'
 require 'flexmock/test_unit_assert_spy_called'
 
-class AssertSpyCalledTest < Test::Unit::TestCase
-  include FlexMock::TestCase
+class AssertSpyCalledTest < Minitest::Test
+  include FlexMock::Minitest
 
   class FooBar
     def foo
@@ -84,8 +84,8 @@ class AssertSpyCalledTest < Test::Unit::TestCase
     end
     assert_match(/  foo\(\)/, ex.message)
     assert_match(/  bar\(1\)/, ex.message)
-    assert_no_match(/  baz\(\)/, ex.message)
-    assert_no_match(/handled by/, ex.message)
+    refute_match(/  baz\(\)/, ex.message)
+    refute_match(/handled by/, ex.message)
   end
 
   def test_assert_error_lists_calls_actually_made_with_handled_by
@@ -97,7 +97,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
     end
     assert_match(/  foo\(\) matched by should_receive\(:foo\)/, ex.message)
     assert_match(/  bar\(1\)/, ex.message)
-    assert_no_match(/  baz\(\)/, ex.message)
+    refute_match(/  baz\(\)/, ex.message)
   end
 
   def test_assert_errors_say_no_calls_made
@@ -109,7 +109,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
   private
 
   def assert_fails(message_pattern)
-     ex = assert_raises(FlexMock.framework_adapter.assertion_failed_error) do
+     ex = assert_raises(assertion_failed_error) do
       yield
     end
     assert_match(message_pattern, ex.message)

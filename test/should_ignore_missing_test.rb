@@ -11,8 +11,8 @@
 
 require 'test_helper'
 
-class TestShouldIgnoreMissing < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestShouldIgnoreMissing < Minitest::Test
+  include FlexMock::Minitest
 
   def setup
     @mock = flexmock("mock")
@@ -62,14 +62,14 @@ class TestShouldIgnoreMissing < Test::Unit::TestCase
   def test_method_returns_callable_proc
     @mock.should_receive(:known_foo).once
     method_proc = @mock.method(:known_foo)
-    assert_not_nil method_proc
+    refute_nil method_proc
     method_proc.call([])
   end
 
   def test_not_calling_method_proc_will_fail_count_constraints
     @mock.should_receive(:known_foo).once
     method_proc = @mock.method(:known_foo)
-    assert_not_nil method_proc
+    refute_nil method_proc
     assert_raises assertion_failed_error do
       flexmock_teardown
     end
@@ -78,7 +78,7 @@ class TestShouldIgnoreMissing < Test::Unit::TestCase
   def test_method_returns_do_nothing_proc_for_missing_methods
     @mock.should_ignore_missing
     method_proc = @mock.method(:plugh)
-    assert_not_nil method_proc
+    refute_nil method_proc
     assert_equal FlexMock.undefined, method_proc.call
   end
 end

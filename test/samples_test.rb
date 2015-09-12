@@ -13,8 +13,8 @@ require 'test_helper'
 
 # Sample FlexMock Usage.
 
-class TestSamples < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestSamples < Minitest::Test
+  include FlexMock::Minitest
 
   # This is a basic example where we setup a mock object to mimic an
   # IO object.  We know that the +count_lines+ method uses gets, so we
@@ -39,8 +39,8 @@ class TestSamples < Test::Unit::TestCase
 end
 
 
-class TestUndefined < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestUndefined < Minitest::Test
+  include FlexMock::Minitest
 
   def test_undefined_values
     m = flexmock("mock")
@@ -51,8 +51,8 @@ class TestUndefined < Test::Unit::TestCase
 end
 
 
-class TestSimple < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestSimple < Minitest::Test
+  include FlexMock::Minitest
 
   def test_simple_mock
     m = flexmock(:pi => 3.1416, :e => 2.71)
@@ -61,8 +61,8 @@ class TestSimple < Test::Unit::TestCase
   end
 end
 
-class TestDog < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDog < Minitest::Test
+  include FlexMock::Minitest
 
   def test_dog_wags
     tail_mock = flexmock(:wag => :happy)
@@ -85,8 +85,8 @@ class Dog
   end
 end
 
-class TestDogBarking < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDogBarking < Minitest::Test
+  include FlexMock::Minitest
 
   # Setup the tests by mocking the +new+ method of
   # Woofer and return a mock woofer.
@@ -101,8 +101,8 @@ class TestDogBarking < Test::Unit::TestCase
   end
 end
 
-class TestDogBarkingWithNewInstances < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDogBarkingWithNewInstances < Minitest::Test
+  include FlexMock::Minitest
 
   # Setup the tests by mocking Woofer to always
   # return partial mocks.
@@ -116,8 +116,8 @@ class TestDogBarkingWithNewInstances < Test::Unit::TestCase
   end
 end
 
-class TestDefaults < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDefaults < Minitest::Test
+  include FlexMock::Minitest
 
   def setup
     @mock_dog = flexmock("Fido")
@@ -131,8 +131,8 @@ class TestDefaults < Test::Unit::TestCase
   end
 end
 
-class TestDemeter < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDemeter < Minitest::Test
+  include FlexMock::Minitest
   def test_manual_mocking
     # Manually mocking a Law of Demeter violation
     cog = flexmock("cog")
@@ -156,8 +156,8 @@ class TestDemeter < Test::Unit::TestCase
 
 end
 
-class TestDb < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDb < Minitest::Test
+  include FlexMock::Minitest
 
   def test_db
     db = flexmock('db')
@@ -170,8 +170,8 @@ class TestDb < Test::Unit::TestCase
 end
 
 
-class TestDb < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestDb < Minitest::Test
+  include FlexMock::Minitest
 
   def test_query_and_update
     db = flexmock('db')
@@ -238,8 +238,8 @@ class TestDb < Test::Unit::TestCase
 
 end
 
-class TestMoreSamples < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestMoreSamples < Minitest::Test
+  include FlexMock::Minitest
 
   def test_multiple_gets
     file = flexmock('file')

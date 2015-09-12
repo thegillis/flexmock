@@ -11,8 +11,8 @@
 
 require 'test_helper'
 
-class ExpectationDescriptionTest < Test::Unit::TestCase
-  include FlexMock::TestCase
+class ExpectationDescriptionTest < Minitest::Test
+  include FlexMock::Minitest
 
   def setup
     @mock = flexmock("mock")

@@ -2,8 +2,8 @@
 
 require 'test_helper'
 
-class TestSpys < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestSpys < Minitest::Test
+  include FlexMock::Minitest
 
   class FooBar
     def foo
@@ -100,7 +100,7 @@ class TestSpys < Test::Unit::TestCase
     @spy.foo(4)
     is_two  = proc { |n| assert_equal 2, n }
     is_even = proc { |n| assert_equal 0, n%2 }
-    assert_failed(/2.*expected but was.*4/mi) do
+    assert_failed(/Expected: 2.*Actual: 4/mi) do
       assert_spy_called @spy, { :and => [is_two, is_even] }, :foo, Integer
     end
   end
@@ -109,7 +109,7 @@ class TestSpys < Test::Unit::TestCase
     @spy.foo(4)
     is_even = proc { |n| assert_equal 0, n%2 }
     is_two  = proc { |n| assert_equal 2, n }
-    assert_failed(/2.*expected but was.*4/mi) do
+    assert_failed(/Expected: 2.*Actual: 4/mi) do
       assert_spy_called @spy, { :and => [is_even, is_two] }, :foo, Integer
     end
   end
@@ -117,7 +117,7 @@ class TestSpys < Test::Unit::TestCase
   def test_spy_rejects_incorrect_additional_validations
     @spy.foo(3)
     is_even = proc { |n| assert_equal 0, n%2 }
-    assert_failed(/0.*expected but was.*1/mi) do
+    assert_failed(/Expected: 0.*Actual: 1/mi) do
       assert_spy_called @spy, { :and => is_even }, :foo, Integer
     end
   end
@@ -127,7 +127,7 @@ class TestSpys < Test::Unit::TestCase
     @spy.foo(3)
     @spy.foo(4)
     is_even = proc { |n| assert_equal 0, n%2 }
-    assert_failed(/0.*expected but was.*1/mi) do
+    assert_failed(/Expected: 0.*Actual: 1/mi) do
       assert_spy_called @spy, { :and => is_even, :on => 2 }, :foo, Integer
     end
   end
@@ -165,13 +165,13 @@ class TestSpys < Test::Unit::TestCase
   end
 
   def test_calling_non_spy_base_methods_is_an_error
-    assert_raise(NoMethodError) do
+    assert_raises(NoMethodError) do
       @spy.baz
     end
   end
 
   def test_cant_put_expectations_on_non_base_class_methodsx
-    ex = assert_raise(NoMethodError) do
+    ex = assert_raises(NoMethodError) do
       @spy.should_receive(:baz).and_return(:bar)
     end
     assert_match(/cannot stub.*defined.*base.*class/i, ex.message)

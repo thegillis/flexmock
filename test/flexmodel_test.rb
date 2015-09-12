@@ -9,8 +9,8 @@ class ChildModel < DummyModel
 end
 
 ######################################################################
-class TestFlexModel < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestFlexModel < Minitest::Test
+  include FlexMock::Minitest
 
   def test_initial_conditions
     model = flexmock(:model, DummyModel)

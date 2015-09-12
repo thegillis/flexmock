@@ -17,7 +17,7 @@ require 'test_helper'
 
 unless defined?(MiniTest)
   class TestTuIntegrationFlexMockMethod < Test::Unit::TestCase
-    include FlexMock::TestCase
+    include FlexMock::Minitest
 
     def test_can_construct_flexmock
       mock = flexmock("x")
@@ -34,7 +34,7 @@ unless defined?(MiniTest)
   end
 
   class TestTuIntegrationMockVerificationInTeardown < Test::Unit::TestCase
-    include FlexMock::TestCase
+    include FlexMock::Minitest
 
     def teardown
       assert_raise(assertion_failed_error) do
@@ -48,7 +48,7 @@ unless defined?(MiniTest)
   end
 
   class TestTuIntegrationMockVerificationWithoutSetup < Test::Unit::TestCase
-    include FlexMock::TestCase
+    include FlexMock::Minitest
 
     def teardown
       assert_raise(assertion_failed_error) do
@@ -62,7 +62,7 @@ unless defined?(MiniTest)
   end
 
   class TestTuIntegrationMockVerificationForgetfulSetup < Test::Unit::TestCase
-    include FlexMock::TestCase
+    include FlexMock::Minitest
 
     def teardown
       assert_raise(assertion_failed_error) do
@@ -76,14 +76,14 @@ unless defined?(MiniTest)
   end
 
   class TestTuIntegrationSetupOverridenAndNoMocksOk < Test::Unit::TestCase
-    include FlexMock::TestCase
+    include FlexMock::Minitest
 
     def test_mock_verification_occurs_during_teardown
     end
   end
 
   class TestTuIntegrationFailurePreventsVerification < Test::Unit::TestCase
-    include FlexMock::TestCase
+    include FlexMock::Minitest
 
     def test_mock_verification_occurs_during_teardown
       flexmock('m').should_receive(:hi).once

@@ -11,8 +11,8 @@
 
 require 'test_helper'
 
-class TestNewInstances < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestNewInstances < Minitest::Test
+  include FlexMock::Minitest
   include FlexMock::RedirectError
 
   class Dog
@@ -95,12 +95,12 @@ class TestNewInstances < Test::Unit::TestCase
     end
 
     Dog.new
-    ex = assert_raise(assertion_failed_error) { flexmock_teardown }
+    ex = assert_raises(assertion_failed_error) { flexmock_teardown }
     assert_match(/method 'bark\(.*\)' called incorrect number of times/i, ex.message)
   end
 
   def test_new_instances_reports_error_on_non_classes
-    ex = assert_raise(ArgumentError) {
+    ex = assert_raises(ArgumentError) {
       flexstub(Dog.new).new_instances do |obj|
         obj.should_receive(:hi)
       end

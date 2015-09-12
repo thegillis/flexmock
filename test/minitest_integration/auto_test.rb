@@ -17,7 +17,7 @@ require "flexmock/minitest"
 
 if defined?(Minitest::Test)
   class TestFlexmockMinitest < Minitest::Test
-    include FlexMock::TestCase
+    include FlexMock::Minitest
   
     def before_teardown
       # flexmock should be teared down right now, and the teardown result should
@@ -40,7 +40,7 @@ if defined?(Minitest::Test)
   end
 else
   class TestFlexmockMinitest < MiniTest::Unit::TestCase
-    include FlexMock::TestCase
+    include FlexMock::Minitest
   
     def before_teardown
       # flexmock should be teared down right now, but nothing should be raised

@@ -1,7 +1,7 @@
 require 'test_helper'
 
-class BaseClassTest < Test::Unit::TestCase
-  include FlexMock::TestCase
+class BaseClassTest < Minitest::Test
+  include FlexMock::Minitest
 
   class FooBar
     def foo
@@ -30,7 +30,7 @@ class BaseClassTest < Test::Unit::TestCase
   end
 
   def test_base_class_does_not_mock_non_base_class_methods
-    assert_raise(NoMethodError) do
+    assert_raises(NoMethodError) do
       mock.fuzz
     end
   end

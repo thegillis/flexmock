@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ClassExtensionsTest < Test::Unit::TestCase
+class ClassExtensionsTest < Minitest::Test
 
   class Dog
     def wag

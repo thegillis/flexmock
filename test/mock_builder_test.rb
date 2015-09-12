@@ -1,13 +1,13 @@
 require 'test_helper'
 
-class MockBuilderTest < Test::Unit::TestCase
-  include FlexMock::TestCase
+class MockBuilderTest < Minitest::Test
+  include FlexMock::Minitest
 
   def assert_method_name(name)
     assert_match(FlexMock::ExpectationBuilder::METHOD_NAME_RE, name)
   end
 
-  def assert_not_method_name(name)
+  def refute_method_name(name)
     refute_match(FlexMock::ExpectationBuilder::METHOD_NAME_RE, name)
   end
 
@@ -54,15 +54,15 @@ class MockBuilderTest < Test::Unit::TestCase
   end
 
   def test_invalid_method_names
-    assert_not_method_name ""
-    assert_not_method_name "1"
-    assert_not_method_name "1foo"
-    assert_not_method_name "foo!!"
-    assert_not_method_name "foo!?"
-    assert_not_method_name "foo?="
-    assert_not_method_name "foo@"
-    assert_not_method_name "++"
-    assert_not_method_name "!!"
-    assert_not_method_name "~="
+    refute_method_name ""
+    refute_method_name "1"
+    refute_method_name "1foo"
+    refute_method_name "foo!!"
+    refute_method_name "foo!?"
+    refute_method_name "foo?="
+    refute_method_name "foo@"
+    refute_method_name "++"
+    refute_method_name "!!"
+    refute_method_name "~="
   end
 end

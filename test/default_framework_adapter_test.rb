@@ -11,7 +11,7 @@
 
 require "test_helper"
 
-class TestFlexmockDefaultFrameworkAdapter < Test::Unit::TestCase
+class TestFlexmockDefaultFrameworkAdapter < Minitest::Test
   def setup
     @adapter = FlexMock::DefaultFrameworkAdapter.new
   end

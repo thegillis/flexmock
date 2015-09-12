@@ -22,8 +22,8 @@ class TemperatureSampler
   end
 end
 
-class TestTemperatureSampler < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestTemperatureSampler < Minitest::Test
+  include FlexMock::Minitest
 
   def test_tempurature_sampler
     readings = [10, 12, 14]
@@ -34,8 +34,8 @@ class TestTemperatureSampler < Test::Unit::TestCase
   end
 end
 
-class TestExamplesFromReadme < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestExamplesFromReadme < Minitest::Test
+  include FlexMock::Minitest
 
   def test_simple_return_values
     m = flexmock(:pi => 3.1416, :e => 2.71)

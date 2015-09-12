@@ -34,8 +34,8 @@ if ENV['TEST_ALIASES']
     end
   end
 
-  class AliasingTest < Test::Unit::TestCase
-    include FlexMock::TestCase
+  class AliasingTest < Minitest::Test
+    include FlexMock::Minitest
 
     def test_mocking
       m = mock("a cute dog").expects(:pat).twice.and_return(:woof!).mock

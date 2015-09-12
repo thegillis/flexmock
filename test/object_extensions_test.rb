@@ -3,7 +3,7 @@
 require 'test_helper'
 require 'flexmock/object_extensions'
 
-class ObjectExtensionsTest < Test::Unit::TestCase
+class ObjectExtensionsTest < Minitest::Test
   def setup
     @obj = Object.new
     def @obj.smethod

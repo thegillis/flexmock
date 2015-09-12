@@ -12,8 +12,8 @@
 require "test_helper"
 
 # These tests exercise the interface used to define mocks
-class TestFlexmockContainerMethods < Test::Unit::TestCase
-  include FlexMock::TestCase
+class TestFlexmockContainerMethods < Minitest::Test
+  include FlexMock::Minitest
 
   def test_simple_mock_creation
     mock = flexmock

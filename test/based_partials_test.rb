@@ -11,8 +11,8 @@
 
 require 'test_helper'
 
-class BasedPartialsTest < Test::Unit::TestCase
-  include FlexMock::TestCase
+class BasedPartialsTest < Minitest::Test
+  include FlexMock::Minitest
 
   def setup
     super
@@ -38,7 +38,7 @@ class BasedPartialsTest < Test::Unit::TestCase
 
   def test_based_partials_disallow_stubbing_undefined_methods
     dog = Dog.new
-    assert_raise(NoMethodError, /cannot stub.*wag.*explicitly/) do
+    assert_raises(NoMethodError, /cannot stub.*wag.*explicitly/) do
       flexmock(dog).should_receive(:wag => :mock_value)
     end
   end
