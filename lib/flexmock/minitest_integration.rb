@@ -62,8 +62,8 @@ class FlexMock
   # Adapter for adapting FlexMock to the Test::Unit framework.
   #
   class MinitestFrameworkAdapter
-    if defined?(Minitest::Test)
-      include Minitest::Assertions
+    if defined?(::Minitest)
+      include ::Minitest::Assertions
     else
       include MiniTest::Assertions
     end
