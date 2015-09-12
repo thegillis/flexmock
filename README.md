@@ -1,5 +1,8 @@
 # Flex Mock -- Making Mocking Easy
 
+[![Build Status](https://travis-ci.org/doudou/flexmock.svg?branch=master)](https://travis-ci.org/doudou/flexmock)
+[![Gem Version](https://badge.fury.io/rb/flexmock.svg)](http://badge.fury.io/rb/flexmock)
+
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
