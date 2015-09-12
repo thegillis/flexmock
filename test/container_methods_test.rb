@@ -9,7 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require "test/test_setup"
+require "test_helper"
 
 # These tests exercise the interface used to define mocks
 class TestFlexmockContainerMethods < Test::Unit::TestCase

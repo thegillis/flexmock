@@ -10,7 +10,7 @@
 #+++
 
 require 'minitest/autorun'
-require "test/test_helpers"
+require "test_helper"
 
 require "flexmock/base"
 require "flexmock/minitest"

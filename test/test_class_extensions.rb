@@ -1,4 +1,4 @@
-require 'test/test_setup'
+require 'test_helper'
 
 class ClassExtensionsTest < Test::Unit::TestCase
 

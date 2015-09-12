@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/test_setup'
+require 'test_helper'
 require 'flexmock/test_unit_assert_spy_called'
 
 class AssertSpyCalledTest < Test::Unit::TestCase

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/test_setup'
+require 'test_helper'
 
 class TestDemeterMocking < Test::Unit::TestCase
   include FlexMock::TestCase

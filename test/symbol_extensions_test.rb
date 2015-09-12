@@ -1,4 +1,4 @@
-require 'test/test_setup'
+require 'test_helper'
 
 class SymbolEtentensionsTest < Test::Unit::TestCase
   def test_as_name_converts_appropriatly

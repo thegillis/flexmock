@@ -1,4 +1,4 @@
-require 'test/test_setup'
+require 'test_helper'
 
 class MockBuilderTest < Test::Unit::TestCase
   include FlexMock::TestCase

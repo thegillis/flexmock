@@ -9,7 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require "test/test_setup"
+require "test_helper"
 
 class UndefinedTest < Test::Unit::TestCase
   def test_undefined_method_calls_return_undefined

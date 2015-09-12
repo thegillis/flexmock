@@ -1,10 +1,13 @@
+require 'minitest/autorun'
+require 'flexmock/minitest'
+
 if !defined?(Minitest::Test)
   require 'test/unit'
 end
 require 'fileutils'
 
 require 'flexmock'
-require 'test/redirect_error'
+require 'redirect_error'
 
 class FlexMock
   module TestCase

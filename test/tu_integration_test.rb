@@ -9,7 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/test_setup'
+require 'test_helper'
 
 # The following tests exercise Test::Unit integration.  They are
 # disabled if actually running under MiniTest because the MiniTest is

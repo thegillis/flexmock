@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/test_setup'
+require 'test_helper'
 
 # This is an experimental test to see if mock and stub methods can
 # easily be added to a flexmock core. These test are disabled by

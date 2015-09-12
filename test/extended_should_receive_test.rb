@@ -9,7 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require "test/test_setup"
+require "test_helper"
 
 module ExtendedShouldReceiveTests
   def test_accepts_expectation_hash

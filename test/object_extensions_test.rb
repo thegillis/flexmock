@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/test_setup'
+require 'test_helper'
 require 'flexmock/object_extensions'
 
 class ObjectExtensionsTest < Test::Unit::TestCase
