@@ -2,19 +2,11 @@
 
 [![Build Status](https://travis-ci.org/doudou/flexmock.svg?branch=master)](https://travis-ci.org/doudou/flexmock)
 [![Gem Version](https://badge.fury.io/rb/flexmock.svg)](http://badge.fury.io/rb/flexmock)
+[![Coverage Status](https://coveralls.io/repos/doudou/flexmock/badge.svg?branch=master&service=github)](https://coveralls.io/github/doudou/flexmock?branch=master)
+[![Documentation](http://b.repl.ca/v1/yard-docs-blue.png)](http://rubydoc.info/gems/flexmock/frames)
 
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
-
-Version :: 2.0
-
-# Links
-
-* **Documents** -- http://rubydoc.info/gems/flemxock
-* **RubyGems**   -- Install with: `gem install flexmock`
-* **Source** -- https://github.com/doudou/flexmock
-* **Bug Reports / Issue Tracking** -- https://github.com/doudou/flexmock/issues
-* **Continuous Integration** -- http://travis-ci.org/#!/doudou/flexmock
 
 ## Installation
 
