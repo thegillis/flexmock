@@ -8,8 +8,12 @@
 * dropped support for pre-2.0 Rubies
 * added explicit minitest support. This makes the minitest integration much
   nicer to work with (in particular, the flexmock_teardown is now executed "just
-  at the right place"), and fixes issues with minitest 5
+  at the right place"), and fixes issues with minitest 5. Just require
+  flexmock/minitest to get it.
 * partial mocks now supports prepended modules
+* validation errors that happen when a method is called (i.e. unexpected
+  arguments, wrong call count) are reported with the backtrace of the call
+  instead of with the backtrace of the expectation definition.
 
 == Version 1.0.0
 
