@@ -910,6 +910,18 @@ class TestFlexMockShoulds < Minitest::Test
     end
   end
 
+  def test_ordering_is_verified_after_eligibility
+    assert_mock_failure(check_failed_error, :message =>COUNT_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
+      FlexMock.use("x", "y") do |x, y|
+        x.should_receive(:one).once.ordered
+        x.should_receive(:two).ordered
+        x.one
+        x.two
+        x.one
+      end
+    end
+  end
+
   def test_expectation_formating
     mock = flexmock("m")
     exp = mock.should_receive(:f).with(1,"two", /^3$/).

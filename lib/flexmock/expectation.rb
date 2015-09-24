@@ -82,8 +82,8 @@ class FlexMock
     # Verify the current call with the given arguments matches the
     # expectations recorded in this object.
     def verify_call(*args)
-      validate_order
       validate_eligible
+      validate_order
       @actual_count += 1
       perform_yielding(args)
       return_value(args)
