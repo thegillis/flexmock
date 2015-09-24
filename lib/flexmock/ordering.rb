@@ -39,11 +39,16 @@ class FlexMock
       @flexmock_current_order = value
     end
 
-    def flexmock_validate_order(method_name, order_number)
-      FlexMock.check("method #{method_name} called out of order " +
-        "(expected order #{order_number}, was #{flexmock_current_order})") {
+    def flexmock_validate_order(method_name, order_number, calls_description = nil)
+      msg = "method #{method_name} called out of order " +
+        "(expected order #{order_number}, was #{flexmock_current_order})"
+      if calls_description
+        msg += "\n#{calls_description}"
+      end
+
+      FlexMock.check(msg) do
         order_number >= self.flexmock_current_order
-      }
+      end
       self.flexmock_current_order = order_number
     end
   end

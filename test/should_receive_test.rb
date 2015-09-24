@@ -839,6 +839,36 @@ class TestFlexMockShoulds < Minitest::Test
     end
   end
 
+  def test_global_ordering_message_includes_received_calls
+    e = assert_mock_failure(check_failed_error, :message =>OUT_OF_ORDER_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
+      FlexMock.use 'm' do |m|
+        one = m.should_receive(:one).globally.ordered
+        two = m.should_receive(:two).globally.ordered
+        m.one
+        m.two
+        m.one
+      end
+    end
+    assert_match /one\(\) matched by should_receive\(:one\)/, e.message
+    assert_match /two\(\) matched by should_receive\(:two\)/, e.message
+    assert_match /one\(\) matched by should_receive\(:one\)/, e.message
+  end
+
+  def test_ordering_message_includes_received_calls
+    e = assert_mock_failure(check_failed_error, :message =>OUT_OF_ORDER_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
+      FlexMock.use 'm' do |m|
+        one = m.should_receive(:one).ordered
+        two = m.should_receive(:two).ordered
+        m.one
+        m.two
+        m.one
+      end
+    end
+    assert_match /one\(\) matched by should_receive\(:one\)/, e.message
+    assert_match /two\(\) matched by should_receive\(:two\)/, e.message
+    assert_match /one\(\) matched by should_receive\(:one\)/, e.message
+  end
+
   def test_explicit_ordering_mixed_with_implicit_ordering_should_not_overlap
     FlexMock.use 'm' do |m|
       xstart = m.should_receive(:start).ordered

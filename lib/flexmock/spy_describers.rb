@@ -17,8 +17,6 @@ class FlexMock
         describe_spy(spy, sym, args, options, " NOT")
       end
 
-      private
-
       def describe_spy(spy, sym, args, options, not_clause="")
         result = "expected "
         result << call_description(sym, args)
@@ -88,6 +86,7 @@ class FlexMock
           "#{sym}(...)"
         end
       end
+      extend SpyDescribers
     end
 
 end

@@ -138,10 +138,14 @@ class FlexMock
     # Validate that the order
     def validate_order
       if @order_number
-        @mock.flexmock_validate_order(to_s, @order_number)
+        @mock.flexmock_validate_order(
+          to_s, @order_number,
+          SpyDescribers.describe_calls(@mock))
       end
       if @global_order_number
-        @mock.flexmock_container.flexmock_validate_order(to_s, @global_order_number)
+        @mock.flexmock_container.flexmock_validate_order(
+          to_s, @global_order_number,
+          SpyDescribers.describe_calls(@mock))
       end
     end
     private :validate_order
