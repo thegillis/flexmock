@@ -58,6 +58,15 @@ class TestFlexmockContainerMethods < Minitest::Test
     assert_equal :lo, mock.hi
   end
 
+  def test_mock_does_not_do_any_validation_once_closed
+    mock = flexmock
+    mock.should_receive(:hi).once.with(20)
+    mock.hi(20)
+    flexmock_teardown
+    mock.does_not_exist
+    mock.hi
+  end
+
   def test_basic_stub
     fido = Object.new
     mock = flexmock(fido)

@@ -85,6 +85,11 @@ class FlexMock
 
   # Teardown and infrastructure setup for this mock.
   def flexmock_teardown
+    @flexmock_closed = true
+  end
+
+  def flexmock_closed?
+    @flexmock_closed
   end
 
   # Ignore all undefined (missing) method calls.
@@ -105,7 +110,9 @@ class FlexMock
     call_record = CallRecord.new(sym, enhanced_args, block_given?)
     @calls << call_record
     flexmock_wrap do
-      if handler = @expectations[sym]
+      if flexmock_closed?
+        FlexMock.undefined
+      elsif handler = @expectations[sym]
         handler.call(enhanced_args, call_record)
       elsif @base_class && @base_class.flexmock_defined?(sym)
         FlexMock.undefined
