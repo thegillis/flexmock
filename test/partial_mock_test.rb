@@ -510,4 +510,34 @@ class TestStubbing < Minitest::Test
     assert(/pass_thru/ === exception.message, "expected #{exception.message} to mention the flexmock pass_thru clause")
   end
 
+  def test_it_checks_whether_mocks_are_forbidden_before_forwarding_the_call
+      obj = Class.new
+      flexmock(obj).should_receive(:mocked).never
+      result = FlexMock.forbid_mocking(tag = Object.new) do
+        obj.mocked
+      end
+      assert_same result, tag
+  end
+
+  def test_inspect_on_mocked_method_can_successfully_call_a_mocked_method
+      obj = Class.new do
+          def inspect
+              mocked(self)
+          end
+      end.new
+      flexmock(obj).should_receive(:mocked).with(any).and_return("10")
+      obj.inspect
+  end
+
+  def test_inspect_on_mocked_method_can_fail_at_calling_a_mocked_method
+      obj = Class.new do
+          def inspect
+              mocked(self)
+          end
+      end.new
+      flexmock(obj).should_receive(:mocked).never
+      assert_raises(FlexMock::CheckFailedError) do
+        obj.inspect
+      end
+  end
 end

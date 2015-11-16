@@ -313,6 +313,7 @@ class FlexMock
       else
         proxy_module_eval <<-EOD
           def #{method_name}(*args, &block)
+            FlexMock.verify_mocking_allowed!
             __flexmock_proxy.mock.#{method_name}(*args, &block)
           end
         EOD

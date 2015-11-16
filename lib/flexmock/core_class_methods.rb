@@ -48,6 +48,34 @@ class FlexMock
       container.flexmock_teardown
     end
 
+    FORBID_MOCKING = :__flexmock_forbid_mocking
+
+    # Forbid mock calls to happen while the block is being evaluated
+    #
+    # @param [Object] mocking_forbidden_return the return value that should be
+    #   used if a mocking call has happened. If no mocking calls happened,
+    #   returns the return value of the block
+    def forbid_mocking(mocking_forbidden_return = nil)
+      current, Thread.current[FORBID_MOCKING] =
+          Thread.current[FORBID_MOCKING], true
+
+      catch(FORBID_MOCKING) do
+        return yield
+      end
+      mocking_forbidden_return
+
+    ensure
+      Thread.current[FORBID_MOCKING] = current
+    end
+
+    # Verify that mocking is allowed in the current context. Throws if it is
+    # not.
+    def verify_mocking_allowed!
+      if Thread.current[FORBID_MOCKING]
+        throw FORBID_MOCKING
+      end
+    end
+
     # Class method to format a method name and argument list as a nice
     # looking string.
     def format_call(sym, args)  # :nodoc:
@@ -58,7 +86,12 @@ class FlexMock
     # parenthesis).
     def format_args(args)
       if args
-        args.collect { |a| a.inspect }.join(', ')
+        args = args.map do |a|
+          FlexMock.forbid_mocking("<recursive call to mocked method in #inspect>") do
+            a.inspect
+          end
+        end
+        args.join(', ')
       else
         "*args"
       end
