@@ -71,7 +71,7 @@ class AssertSpyCalledTest < Minitest::Test
 
   def test_assert_rejects_bad_count_on_any_args
     spy.foo
-    assert_fails(/^expected foo\(\.\.\.\) to be received by <FlexMock:AssertSpyCalledTest::FooBar Mock> twice/i) do
+    assert_fails(/^expected foo\(\*args\) to be received by <FlexMock:AssertSpyCalledTest::FooBar Mock> twice/i) do
       assert_spy_called spy, {:times => 2}, :foo, :_
     end
   end

@@ -3,7 +3,7 @@ class FlexMock
     module SpyDescribers
       def spy_description(spy, sym, args, options)
         result = "have received "
-        result << call_description(sym, args)
+        result << FlexMock.format_call(sym, args)
         result << times_description(options[:times])
         result << block_description(options[:with_block])
         result
@@ -19,7 +19,7 @@ class FlexMock
 
       def describe_spy(spy, sym, args, options, not_clause="")
         result = "expected "
-        result << call_description(sym, args)
+        result << FlexMock.format_call(sym, args)
         result << " to#{not_clause} be received by " << spy.inspect
         result << times_description(options[:times])
         result << block_description(options[:with_block])
@@ -44,7 +44,7 @@ class FlexMock
       def append_call_record(result, call_record)
         result <<
           "    " <<
-          call_description(call_record.method_name, call_record.args)
+          FlexMock.format_call(call_record.method_name, call_record.args)
         if call_record.expectation
           result <<
             " matched by " <<
@@ -79,13 +79,6 @@ class FlexMock
         end
       end
 
-      def call_description(sym, args)
-        if args
-          "#{sym}(#{args.map { |o| o.inspect }.join(', ')})"
-        else
-          "#{sym}(...)"
-        end
-      end
       extend SpyDescribers
     end
 
