@@ -761,6 +761,18 @@ class TestFlexMockShoulds < Minitest::Test
     end
   end
 
+  def test_failure_in_ordered_calls_combined_with_valid_count_will_report_an_order_failure
+    assert_mock_failure(check_failed_error, :message =>OUT_OF_ORDER_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
+      FlexMock.use 'm', 'n' do |m, n|
+        m.should_receive(:hi).once.globally.ordered
+        n.should_receive(:lo).once.globally.ordered
+
+        n.lo
+        m.hi
+      end
+    end
+  end
+
   def test_order_calls_with_different_arg_lists_and_in_order_will_pass
     FlexMock.use 'm' do |m|
       m.should_receive(:hi).with("one").ordered
